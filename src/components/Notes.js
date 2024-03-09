@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/noteContext";
 import Noteitem from "./Noteitem";
 import AddNote from "./AddNote";
+import { useNavigate } from "react-router-dom";
 const Notes = (props) => {
   const context = useContext(noteContext);
+  let navigation = useNavigate();
   const { notes, getNotes, updateNote } = context;
   const [note, setNote] = useState({
     id: "",
@@ -12,15 +14,18 @@ const Notes = (props) => {
     etag: "",
   });
   useEffect(() => {
-    getNotes();
-    // eslint-disable-next-line
+    if (localStorage.getItem("token")) {
+      getNotes();
+    } else {
+      navigation("/Login1");
+    }
   }, []);
 
   const handleClick = (e) => {
     console.log("updating notes......", note);
     updateNote(note.id, note.etitle, note.edescription, note.etag);
     refClose.current.click();
-    props.showAlert("Update Successfully!", "succes")
+    props.showAlert("Update Successfully!", "succes");
   };
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
@@ -47,7 +52,6 @@ const Notes = (props) => {
         data-bs-toggle="modal"
         data-bs-target="#exampleModal"
       >
-        Launch demo modal
       </button>
       <div
         className="modal fade"
@@ -138,15 +142,24 @@ const Notes = (props) => {
         </div>
       </div>
       <div className="container row my-3">
-        <h2> Your Notes </h2>
+        <h2 style={{color: "#0D6EFD"}}> Your Notes </h2>
         <div className="container">
           {notes.length === 0 && "Notes Not Available!"}
         </div>
-        {notes.map((note) => {
-          return (
-            <Noteitem key={note._id} updateNote={updateNotes} showAlert={props.showAlert} note={note} />
-          );
-        })}
+        <div className=" container row">
+          {notes && notes.length > 0
+            ? notes.map((notes) => {
+                return (
+                  <Noteitem
+                    key={notes._id}
+                    updateNote={updateNotes}
+                    showAlert={props.showAlert}
+                    note={notes}
+                  />
+                );
+              })
+            : null}
+        </div>
       </div>
     </>
   );

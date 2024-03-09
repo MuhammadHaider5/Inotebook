@@ -4,7 +4,9 @@ const NoteState = (props) => {
   const host = "http://localhost:5000";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
+  const authToken = localStorage.getItem('token');
 
+  // Get all the notes from the server
   /* =============== GET ALL NOTES =============== */
   const getNotes = async () => {
     /* =============== API CALL FOR GET ALL NOTES =============== */
@@ -12,8 +14,8 @@ const NoteState = (props) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "auth-Token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJfaWQiOiI2NWRkMGNjMDQyYjk0MjMxYzI3ZjY3NTIifSwiaWF0IjoxNzA4OTg1NTQ1fQ.XBprxRBPICAqVUPZWoafd1Ne69PVYbzhH9D8UzK2gvk",
+        "auth-Token": authToken
+          
       },
     });
 
@@ -30,8 +32,8 @@ const NoteState = (props) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "auth-Token":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJfaWQiOiI2NWRkMGNjMDQyYjk0MjMxYzI3ZjY3NTIifSwiaWF0IjoxNzA4OTg1NTQ1fQ.XBprxRBPICAqVUPZWoafd1Ne69PVYbzhH9D8UzK2gvk",
+          "auth-Token": authToken
+            
         },
         body: JSON.stringify({ title, description, tag }), // Corrected body format
       });
@@ -40,47 +42,25 @@ const NoteState = (props) => {
         throw new Error("Failed to add note");
       }
 
-      const notes = await response.json();
-      console.log("Note added:", notes);
+      const data = await response.json();
+      console.log("Note added:", data);
 
       /* =============== Logic To Add Note In Client ===============*/
       console.log("Adding a new note");
-      
+      const note = {
+        _id: data._id,
+        title: title,
+        description: description,
+        tag: tag,
+        date: data.date,
+        __v: data.__v,
+      };
       // Assuming 'notes' is an array of existing notes and 'setNotes' is a function to update the state
-      setNotes((prevNotes) => [...prevNotes, notes]);
+      setNotes((prevNotes) => [...prevNotes, note]);
     } catch (error) {
       console.error("Error adding note:", error);
     }
   };
-
-  // /* =============== ADD A NOTES ===============*/
-  // const addNote = async (title, description, tag) => {
-  //   /* =============== API Call FOR ADD NOTE ===============*/
-  //   const response = await fetch(`${host}/api/notes/addnote`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "auth-Token":
-  //         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJfaWQiOiI2NWRkMGNjMDQyYjk0MjMxYzI3ZjY3NTIifSwiaWF0IjoxNzA4OTg1NTQ1fQ.XBprxRBPICAqVUPZWoafd1Ne69PVYbzhH9D8UzK2gvk",
-  //     },
-  //     body: JSON.stringify(title, description, tag),
-  //   });
-  //   const json = response.json();
-  //   console.log(json);
-  //   /* =============== Logic To Add Note In Client ===============*/
-  //   console.log("adding a new note");
-  //   const note = [
-  //     {
-  //       _id: "65d08ca9b4e09aafd44f005f",
-  //       title: title,
-  //       description: description,
-  //       tag: tag,
-  //       date: "2024-02-17T10:38:33.409Z",
-  //       __v: 0,
-  //     },
-  //   ];
-  //   setNotes(note.concat(notes));
-  // };
 
   /* =============== DELETE A NOTE ===============*/
   const deleteNote = async (id) => {
@@ -89,8 +69,7 @@ const NoteState = (props) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "auth-Token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJfaWQiOiI2NWRkMGNjMDQyYjk0MjMxYzI3ZjY3NTIifSwiaWF0IjoxNzA4OTg1NTQ1fQ.XBprxRBPICAqVUPZWoafd1Ne69PVYbzhH9D8UzK2gvk",
+        "auth-Token": authToken
       },
     });
     const json = response.json();
@@ -110,8 +89,8 @@ const updateNote = async (id, title, description, tag) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "auth-Token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJfaWQiOiI2NWRkMGNjMDQyYjk0MjMxYzI3ZjY3NTIifSwiaWF0IjoxNzA4OTg1NTQ1fQ.XBprxRBPICAqVUPZWoafd1Ne69PVYbzhH9D8UzK2gvk",
+        "auth-Token": authToken
+          
       },
       body: JSON.stringify({ title, description, tag }), // Corrected this line
     });

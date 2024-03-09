@@ -16,7 +16,7 @@ const AddNote = (props) => {
   return (
     <div>
       <div className="container my-3">
-        <h2> Add a Notes </h2>
+        <h2 className="container" style={{color: "#0D6EFD"}}> Add a Notes </h2>
         <form className="container">
           <div className="form-group">
             <label htmlFor="title">Title</label>

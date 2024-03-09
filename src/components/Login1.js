@@ -6,13 +6,14 @@ const Login1 = (props) => {
     let navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
+        props.showAlert("InValid Credentials", "info");
         try {
           const response = await fetch("http://localhost:5000/api/auth/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email: credentials.email, password: credentials.password }),
+            body: JSON.stringify ({ email: credentials.email, password: credentials.password }),
           });
       
           if (!response.ok) {
@@ -24,11 +25,11 @@ const Login1 = (props) => {
       
           if (json.success) {
             // save the auth token and redirect
-            localStorage.setItem('token', json.authtoken);
-            props.showAlert("Logged In  Successfully!","alert alert-info");
+            localStorage.setItem('token', json.authToken);
+            props.showAlert("Logged In Successfully!", "info");
             navigate("/");
           } else {
-            props.showAlert(json.message,"alert alert-danger");
+            props.showAlert(json.message,"danger");
           }
         } catch (error) {
           console.error('Error logging in:', error.message);
@@ -40,7 +41,8 @@ const Login1 = (props) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
       };
   return (
-    <div>
+    <div className="container mt-3">
+        <h2 style={{color: "#0D6EFD"}}>Login to Enter InoteBook</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
